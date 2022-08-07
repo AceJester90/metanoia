@@ -19,13 +19,17 @@ contract mintTokens is Ownable, ERC1155MultiUri{
 
     //view the owner/owners and the total supply of an specific ID nft
     function viewOwner(address _token, uint _id) public view{
-        Iowner(_token).owners();
         Iowner(_token).ownerOf(_id);
+    }
+
+    //view total supply of the given token 
+    function viewTotalSupply(address _token, uint _id) public view{
         Iowner(_token).totalSupply(_id);
     }
     
     //view all Mixie Holders
-    function viewOwners() public view{
+    function viewOwners(address _token) public view{
+        Iowner(_token).owners();
     }
 
     //allow contract owner to mint copy to an address P.S Change to internal before submitting to mainnet
@@ -55,24 +59,26 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
+        uint _amount = 1;
         for(uint i = 0; i < _accounts.length; i++){
-            uint _amount = 1;
             uint _id = nextFreeId;
-            _mintWithURI(_accounts[i], _id, _amount, data, _newuri);
             nextFreeId++;
+            _mintWithURI(_accounts[i], _id, _amount, data, _newuri);
         }
     }
 
     //allow contract owner to mint copy of a new nft to multiple adresses
     function mintCopyToMultipleAddress(
         address[] memory _accounts,
-        bytes memory data
+        bytes memory data,
+        string memory _newuri
     ) public onlyOwner{
         uint _id = nextFreeId;
-        for(uint i = 0; i < _accounts.length; i++){
-            uint _amount = 1;
-            _mintWithoutURI(_accounts[i], _id, _amount, data);
-        }
         nextFreeId++;
+        uint _amount = 1;
+        _mintWithURI(_accounts[0], _id, _amount, data, _newuri);
+        for(uint i = 0; i < _accounts.length; i++){
+            _mintWithoutURI(_accounts[i+1], _id, _amount, data);
+        }
     }
 }
