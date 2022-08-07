@@ -31,7 +31,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     function viewOwners(address _token) public view{
         Iowner(_token).owners();
     }
-
+    /* Commented out since it serves no purpose right now but might have later on(if not remove before submitting to mainnet)
     //allow contract owner to mint copy to an address P.S Change to internal before submitting to mainnet
     function mintUniqueNft(
         address _account,
@@ -52,9 +52,10 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         uint _amount = 1;
         _mintWithoutURI(_account, _id, _amount, data);
     }
+    */
 
     //allow contract owner to mint new unique nft to multiple addresses
-    function mintUniqueNftToMultipleAddress(
+    function mintUniqueNftsToMultipleAddress(
         address[] memory _accounts,
         bytes memory data,
         string memory _newuri
@@ -68,7 +69,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     }
 
     //allow contract owner to mint copy of a new nft to multiple adresses
-    function mintCopyToMultipleAddress(
+    function mintCopiesToMultipleAddress(
         address[] memory _accounts,
         bytes memory data,
         string memory _newuri
@@ -77,8 +78,26 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         nextFreeId++;
         uint _amount = 1;
         _mintWithURI(_accounts[0], _id, _amount, data, _newuri);
-        for(uint i = 0; i < _accounts.length; i++){
-            _mintWithoutURI(_accounts[i+1], _id, _amount, data);
+        for(uint i = 1; i < _accounts.length; i++){
+            _mintWithoutURI(_accounts[i], _id, _amount, data);
         }
+    }
+
+    function mintCopiesOfNewNftToEachCurrentHolder(
+        address _token,
+        bytes memory data,
+        string memory _newuri
+    ) public onlyOwner{
+        address[] memory _accounts = Iowner(_token).owners();
+        mintCopiesToMultipleAddress(_accounts, data, _newuri);
+    }
+
+    function mintUniqueNftsToEachCurrentHolder(
+        address _token,
+        bytes memory data,
+        string memory _newuri
+    ) public onlyOwner{
+        address[] memory _accounts = Iowner(_token).owners();
+        mintUniqueNftsToMultipleAddress(_accounts, data, _newuri);
     }
 }
