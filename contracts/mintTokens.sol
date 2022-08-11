@@ -12,7 +12,6 @@ interface Iowner {
 }
 
 contract mintTokens is Ownable, ERC1155MultiUri{
-
     uint nextFreeId;
 
     constructor() ERC1155("") {}
@@ -31,8 +30,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     function viewOwners(address _token) public view{
         Iowner(_token).owners();
     }
-    /* Commented out since it serves no purpose right now but might have later on(if not remove before submitting to mainnet)
-    //allow contract owner to mint copy to an address P.S Change to internal before submitting to mainnet
+    
     function mintUniqueNft(
         address _account,
         uint256 _id,
@@ -43,7 +41,6 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         _mintWithURI(_account, _id, _amount, data, _newuri);
     }
 
-    //allow contract owner to mint copy to an address P.S Change to internal before submitting to mainnet
     function mintCopy(
         address _account,
         uint256 _id,
@@ -52,10 +49,9 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         uint _amount = 1;
         _mintWithoutURI(_account, _id, _amount, data);
     }
-    */
 
     //allow contract owner to mint new unique nft to multiple addresses
-    function mintUniqueNftsToMultipleAddress(
+    function mintUniqueNftsToMultipleAddresses(
         address[] memory _accounts,
         bytes memory data,
         string memory _newuri
@@ -69,7 +65,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     }
 
     //allow contract owner to mint copy of a new nft to multiple adresses
-    function mintCopiesToMultipleAddress(
+    function mintCopiesToMultipleAddresses(
         address[] memory _accounts,
         bytes memory data,
         string memory _newuri
@@ -83,13 +79,13 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         }
     }
 
-    function mintCopiesOfNewNftToEachCurrentHolder(
+    /*function mintCopiesOfNewNftToEachCurrentHolder(
         address _token,
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
         address[] memory _accounts = Iowner(_token).owners();
-        mintCopiesToMultipleAddress(_accounts, data, _newuri);
+        mintCopiesToMultipleAddresses(_accounts, data, _newuri);
     }
 
     function mintUniqueNftsToEachCurrentHolder(
@@ -98,6 +94,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         string memory _newuri
     ) public onlyOwner{
         address[] memory _accounts = Iowner(_token).owners();
-        mintUniqueNftsToMultipleAddress(_accounts, data, _newuri);
+        mintUniqueNftsToMultipleAddresses(_accounts, data, _newuri);
     }
+    */
 }
