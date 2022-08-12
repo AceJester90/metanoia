@@ -14,6 +14,8 @@ interface Iowner {
 contract mintTokens is Ownable, ERC1155MultiUri{
     uint nextFreeId;
 
+    mapping (uint => bool) public lock;
+
     constructor() ERC1155("") {}
 
     //view the owner/owners and the total supply of an specific ID nft
@@ -30,22 +32,26 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     function viewOwners(address _token) public view{
         Iowner(_token).owners();
     }
-    
+
     function mintUniqueNft(
         address _account,
-        uint256 _id,
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
+        require(!lock[nextFreeId]==false, "This id is locked");
+        uint _id = nextFreeId;
+        nextFreeId++;
         uint _amount = 1;
         _mintWithURI(_account, _id, _amount, data, _newuri);
     }
 
     function mintCopy(
         address _account,
-        uint256 _id,
         bytes memory data
     ) public onlyOwner {
+        require(lock[nextFreeId] == false, "This ID is locked");
+        uint _id = nextFreeId;
+        nextFreeId++;
         uint _amount = 1;
         _mintWithoutURI(_account, _id, _amount, data);
     }
@@ -58,6 +64,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     ) public onlyOwner{
         uint _amount = 1;
         for(uint i = 0; i < _accounts.length; i++){
+            require(lock[nextFreeId] == false, "This ID is locked");
             uint _id = nextFreeId;
             nextFreeId++;
             _mintWithURI(_accounts[i], _id, _amount, data, _newuri);
@@ -70,6 +77,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
+        require(lock[nextFreeId] == false, "This ID is locked");
         uint _id = nextFreeId;
         nextFreeId++;
         uint _amount = 1;
@@ -79,11 +87,17 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         }
     }
 
+    function lockID(uint _id) public onlyOwner{
+        require(lock[_id] == false, "This ID is already locked");
+        lock[_id] = true;
+    }
+
     /*function mintCopiesOfNewNftToEachCurrentHolder(
         address _token,
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
+        require(lock[_id] == false, "This ID is locked");
         address[] memory _accounts = Iowner(_token).owners();
         mintCopiesToMultipleAddresses(_accounts, data, _newuri);
     }
@@ -93,6 +107,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
+        require(lock[_id] == false, "This ID is locked");
         address[] memory _accounts = Iowner(_token).owners();
         mintUniqueNftsToMultipleAddresses(_accounts, data, _newuri);
     }
