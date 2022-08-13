@@ -33,18 +33,19 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         Iowner(_token).owners();
     }
 
+    //mint unique nft to an address
     function mintUniqueNft(
         address _account,
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
-        require(!lock[nextFreeId]==false, "This id is locked");
+        require(lock[nextFreeId]==false, "This id is locked");
         uint _id = nextFreeId;
         nextFreeId++;
         uint _amount = 1;
         _mintWithURI(_account, _id, _amount, data, _newuri);
     }
-
+    //mint a copy to an address
     function mintCopy(
         address _account,
         bytes memory data
@@ -87,8 +88,10 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         }
     }
 
+    //allow owner to lock a specific ID
     function lockID(uint _id) public onlyOwner{
         require(lock[_id] == false, "This ID is already locked");
+        require(!(lock[_id] > 0), "This ID can't be locked")
         lock[_id] = true;
     }
 
