@@ -6,8 +6,6 @@ import "./ERC1155MultiUri.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface Iowner {
-    function owners() external view returns (address[] memory);
-    function ownerOf(uint id) external view returns (address);
     function totalSupply(uint id) external view returns (uint);
 }
 
@@ -18,19 +16,9 @@ contract mintTokens is Ownable, ERC1155MultiUri{
 
     constructor() ERC1155("") {}
 
-    //view the owner/owners and the total supply of an specific ID nft
-    function viewOwner(address _token, uint _id) public view{
-        Iowner(_token).ownerOf(_id);
-    }
-
     //view total supply of the given token 
     function viewTotalSupply(address _token, uint _id) public view{
         Iowner(_token).totalSupply(_id);
-    }
-    
-    //view all Mixie Holders
-    function viewOwners(address _token) public view{
-        Iowner(_token).owners();
     }
 
     //mint unique nft to an address
