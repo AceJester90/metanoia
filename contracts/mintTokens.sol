@@ -79,7 +79,7 @@ contract mintTokens is Ownable, ERC1155MultiUri{
     //allow owner to lock a specific ID
     function lockID(uint _id) public onlyOwner{
         require(lock[_id] == false, "This ID is already locked");
-        require(!(lock[_id] > 0), "This ID can't be locked")
+        require((_id > 0), "This ID can't be locked");
         lock[_id] = true;
     }
 
