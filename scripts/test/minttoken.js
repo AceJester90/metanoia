@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("mintTokens contract", function () {
-it("Deployment should allow contract owners to mint tokens to an address", async function mintTokenFixture() {
+async function mintTokenFixture() {
 	const [owner, addr1, addr2] = await ethers.getSigners();
 	const mintToken = await ethers.getContractFactory("mintTokens");
 	const hardhatdeploy = await mintToken.deploy();
@@ -15,13 +15,21 @@ it("Deployment should allow contract owners to mint tokens to an address", async
 	let _sampleMultipleAddresses = [addr1.address, addr2.address];
 	let _sampleID = 1;
 	
+	return { mintToken,hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID };
+	}
+	
+	it("should check the total supply", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
 	const tryToViewTotalSupply = await 		hardhatdeploy.viewTotalSupply(
 	_sampleTokenAddress,
 	_sampleUid);
 	expect(await hardhatdeploy.viewTotalSupply(
 	_sampleTokenAddress,
 	_sampleUid)).to.be.not.reverted
+	})
 	
+	it("should mint unique nft", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
 	const tryToMintUniqueNft = await hardhatdeploy.mintUniqueNft(
 	addr2.address,
 	_sampleData,
@@ -30,17 +38,28 @@ it("Deployment should allow contract owners to mint tokens to an address", async
 	addr2.address,
 	_sampleData,
 	_sampleNewuri)).to.be.not.reverted
+	})
 	
-	
-	const tryToMintCopy = await hardhatdeploy.mintCopy(
+	it("should mint a copy nft", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
+	const _account = addr2.address;
+	const tryToMintUniqueNft = await hardhatdeploy.mintUniqueNft(
 	addr2.address,
+	_sampleData,
+	_sampleNewuri);
+	//try to copy the minted unique NFT
+	const tryToMintCopy = await hardhatdeploy.mintCopy(
+	_account,
 	_sampleID,
 	_sampleData);
 	expect(await hardhatdeploy.mintCopy(
-	addr2.address,
+	_account,
 	_sampleID,
 	_sampleData)).to.be.not.reverted
+	});
 	
+	it("should mint nft to multiple addresses", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
 	const tryToMintUniqueNftsToMultipleAddresses = await hardhatdeploy.mintUniqueNftsToMultipleAddresses(
 	_sampleMultipleAddresses,
 	_sampleData,
@@ -49,7 +68,10 @@ it("Deployment should allow contract owners to mint tokens to an address", async
 	_sampleMultipleAddresses,
 	_sampleData,
 	_sampleNewuri)).to.be.not.reverted
+	})
 	
+	it("should mint copy to multiple addresses", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
 	const tryToMintCopiesToMultipleAddresses = await hardhatdeploy.mintCopiesToMultipleAddresses(
 	_sampleMultipleAddresses,
 	_sampleData,
@@ -58,9 +80,12 @@ it("Deployment should allow contract owners to mint tokens to an address", async
 	_sampleMultipleAddresses,
 	_sampleData,
 	_sampleNewuri)).to.be.not.reverted
+	})
 	
+	it("should lock the ID", async function () {
+	const { mintToken, hardhatdeploy, owner, addr1, addr2, _sampleTokenAddress, _sampleUid, _sampleNewuri, _sampleData, _sampleMultipleAddresses, _sampleID } = await loadFixture(mintTokenFixture);
 	const tryToLockID = await hardhatdeploy.lockID(_sampleID)
 	expect(await hardhatdeploy.checkIfLocked(_sampleID)).to.equal(true)
+	})
 
-})
 })
