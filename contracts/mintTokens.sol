@@ -10,8 +10,7 @@ interface Iowner {
 }
 
 contract mintTokens is Ownable, ERC1155MultiUri{
-    uint nextFreeId;
-    bool success;
+    uint nextFreeId = 1;
 
     mapping (uint => bool) public locked;
 
@@ -28,25 +27,21 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
-    	success = false;
         require(locked[nextFreeId]==false, "This id is locked");
         uint _id = nextFreeId;
         nextFreeId++;
         uint _amount = 1;
         _mintWithURI(_account, _id, _amount, data, _newuri);
-        success = true;
     }
+    
     //mint a copy to an address
     function mintCopy(
         address _account,
         uint _id,
         bytes memory data
     ) public onlyOwner {
-    	success = false;
         require(locked[_id] == false, "This ID is locked");
-        uint _amount = 1;
-        _mintWithoutURI(_account, _id, _amount, data);
-        success = true;
+        _mintWithoutURI(_account, _id, 1, data);
     }
 
     //allow contract owner to mint new unique nft to multiple addresses
@@ -56,13 +51,11 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         string memory _newuri
     ) public onlyOwner{
         uint _amount = 1;
-     	success = false;
         for(uint i = 0; i < _accounts.length; i++){
             require(locked[nextFreeId] == false, "This ID is locked");
             uint _id = nextFreeId;
             nextFreeId++;
             _mintWithURI(_accounts[i], _id, _amount, data, _newuri);
-            success = true;
         }
     }
 
@@ -72,7 +65,6 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         bytes memory data,
         string memory _newuri
     ) public onlyOwner{
-    	success = false;
         require(locked[nextFreeId] == false, "This ID is locked");
         uint _id = nextFreeId;
         nextFreeId++;
@@ -81,7 +73,6 @@ contract mintTokens is Ownable, ERC1155MultiUri{
         for(uint i = 1; i < _accounts.length; i++){
             _mintWithoutURI(_accounts[i], _id, _amount, data);
         }
-        success = true;
     }
 
     //allow owner to lock a specific ID
