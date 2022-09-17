@@ -68,6 +68,7 @@ describe("mintTokens contract", function () {
 		       owner, 
 		       addr1, 
 		       addr2, 
+		       _sampleNewuri, 
 		       _sampleData, 
 		       _sampleID 
 		      } = await loadFixture(mintTokenFixture);
