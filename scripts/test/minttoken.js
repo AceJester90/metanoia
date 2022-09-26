@@ -36,11 +36,11 @@ describe("mintTokens contract", function () {
 		       _sampleUid
 		      } = await loadFixture(mintTokenFixture);
 		const tryToViewTotalSupply = await hardhatdeploy.viewTotalSupply(
-		_sampleTokenAddress,
-		_sampleUid);
+			_sampleTokenAddress,
+			_sampleUid);
 		expect(await hardhatdeploy.viewTotalSupply(
-		_sampleTokenAddress,
-		_sampleUid)).to.be.not.reverted
+			_sampleTokenAddress,
+			_sampleUid)).to.be.not.reverted
 	})
 	
 	it("should mint unique nft", async function () {
@@ -53,17 +53,17 @@ describe("mintTokens contract", function () {
 		       _sampleData
 		      } = await loadFixture(mintTokenFixture);
 		const tryToMintUniqueNft = await hardhatdeploy.mintUniqueNft(
-		addr2.address,
-		_sampleData,
-		_sampleNewuri);
+			addr2.address,
+			_sampleData,
+			_sampleNewuri);
 		expect(await hardhatdeploy.mintUniqueNft(
-		addr2.address,
-		_sampleData,
-		_sampleNewuri)).to.be.not.reverted
+			addr2.address,
+			_sampleData,
+			_sampleNewuri)).to.be.not.reverted
 	})
 	
 	
-	it("should mint a copy nft from a existing nft", async function () {
+	it("should mint a copy nft from an existing nft", async function () {
 		const { mintToken, 
 		       hardhatdeploy, 
 		       owner, 
@@ -104,7 +104,7 @@ describe("mintTokens contract", function () {
 			_sampleMultipleAddresses,
 			_sampleData,
 			_sampleNewuri)
-		expect(await hardhatdeploy.mintUniqueNftsToMultipleAddresses(
+		await expect(hardhatdeploy.mintUniqueNftsToMultipleAddresses(
 			_sampleMultipleAddresses,
 			_sampleData,
 			_sampleNewuri)).to.be.not.reverted
@@ -124,7 +124,7 @@ describe("mintTokens contract", function () {
 			_sampleMultipleAddresses,
 			_sampleData,
 			_sampleNewuri)
-		expect(await hardhatdeploy.mintCopiesToMultipleAddresses(
+		await expect(hardhatdeploy.mintCopiesToMultipleAddresses(
 			_sampleMultipleAddresses,
 			_sampleData,
 			_sampleNewuri)).to.be.not.reverted
@@ -135,7 +135,7 @@ describe("mintTokens contract", function () {
 		       hardhatdeploy, 
 		       _sampleID 
 		      } = await loadFixture(mintTokenFixture);
-		expect(await hardhatdeploy.checkIfLocked(_sampleID)).to.equal(false)
+		await expect(await hardhatdeploy.checkIfLocked(_sampleID)).to.equal(false)
 	})	
 	
 	it("should lock the ID", async function () {
@@ -144,7 +144,7 @@ describe("mintTokens contract", function () {
 		       _sampleID 
 		      } = await loadFixture(mintTokenFixture);
 		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
-		expect(await hardhatdeploy.checkIfLocked(_sampleID)).to.equal(true)
+		await expect(await hardhatdeploy.checkIfLocked(_sampleID)).to.equal(true)
 	})
 
 	it("should fail to mint unique nft with a locked ID", async function () {
@@ -158,17 +158,13 @@ describe("mintTokens contract", function () {
 		       _sampleID
 		      } = await loadFixture(mintTokenFixture);
 		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
-		const tryToMintUniqueNft = await hardhatdeploy.mintUniqueNft(
+		await expect(hardhatdeploy.mintUniqueNft(
 			addr2.address,
 			_sampleData,
-			_sampleNewuri);
-		await expect(hardhatdeploy.connect.mintUniqueNft(
-			addr2.address,
-			_sampleData,
-			_sampleNewuri)).to.be.revertedWith("This id is locked");
+			_sampleNewuri)).to.be.revertedWith("This ID is locked");
 	})
 
-	it("should fail to mint a copy nft from a existing nft", async function () {
+	it("should fail to mint a copy nft from an existing nft due to lock", async function () {
 		const { mintToken, 
 		       hardhatdeploy, 
 		       owner, 
@@ -179,19 +175,15 @@ describe("mintTokens contract", function () {
 		       _sampleID
 		      } = await loadFixture(mintTokenFixture);
 		const _account = addr2.address;
-		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
 		const tryToMintUniqueNft = await hardhatdeploy.mintUniqueNft(
 			addr2.address,
 			_sampleData,
 			_sampleNewuri);
-		const tryToMintCopy = await hardhatdeploy.mintCopy(
+		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
+		await expect(hardhatdeploy.mintCopy(
 			_account,
 			_sampleID,
-			_sampleData);
-		expect(await hardhatdeploy.mintCopy(
-			_account,
-			_sampleID,
-			_sampleData)).to.be.revertedWith("This id is locked")
+			_sampleData)).to.be.revertedWith("This ID is locked");
 	});
 
 	it("should fail to mint a copy nft from a non-existent nft", async function () {
@@ -205,14 +197,10 @@ describe("mintTokens contract", function () {
 		       _sampleID
 		      } = await loadFixture(mintTokenFixture);
 		const _account = addr2.address;
-		const tryToMintCopy = await hardhatdeploy.mintCopy(
+		await expect(hardhatdeploy.mintCopy(
 			_account,
 			_sampleID,
-			_sampleData);
-		expect(await hardhatdeploy.mintCopy(
-			_account,
-			_sampleID,
-			_sampleData)).to.be.revertedWith("Please provide metadata for new token")
+			_sampleData)).to.be.reverted;
 	});
 
 })
