@@ -158,7 +158,7 @@ describe("mintTokens contract", function () {
 		       _sampleID
 		      } = await loadFixture(mintTokenFixture);
 		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
-		await expect(hardhatdeploy.mintUniqueNft(
+		const tryToMintUniqueNft = await expect(hardhatdeploy.mintUniqueNft(
 			addr2.address,
 			_sampleData,
 			_sampleNewuri)).to.be.revertedWith("This ID is locked");
@@ -202,5 +202,41 @@ describe("mintTokens contract", function () {
 			_sampleID,
 			_sampleData)).to.be.reverted;
 	});
-
+	
+	it("should fail to mint nft to multiple addresses due to locked ID", async function () {
+		const { mintToken, 
+		       hardhatdeploy, 
+		       owner, 
+		       addr1, 
+		       addr2,
+		       _sampleID,
+		       _sampleNewuri, 
+		       _sampleData, 
+		       _sampleMultipleAddresses 
+		      } = await loadFixture(mintTokenFixture);
+		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
+		const tryToMintUniqueNftsToMultipleAddresses = await expect(hardhatdeploy.mintUniqueNftsToMultipleAddresses(
+			_sampleMultipleAddresses,
+			_sampleData,
+			_sampleNewuri)).to.be.revertedWith("This ID is locked");
+	})
+	
+	it("should fail to mint copy to multiple addresses", async function () {
+		const { mintToken, 
+		       hardhatdeploy, 
+		       owner, 
+		       addr1, 
+		       addr2,
+		       _sampleID,
+		       _sampleNewuri, 
+		       _sampleData, 
+		       _sampleMultipleAddresses 
+		      } = await loadFixture(mintTokenFixture);
+		const tryToLockID = await hardhatdeploy.lockID(_sampleID)
+		const tryToMintCopiesToMultipleAddresses = await expect(hardhatdeploy.mintCopiesToMultipleAddresses(
+			_sampleMultipleAddresses,
+			_sampleData,
+			_sampleNewuri)).to.be.revertedWith("This ID is locked");
+	})
+	
 })
